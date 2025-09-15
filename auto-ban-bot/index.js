@@ -37,16 +37,19 @@ const client = new Client({
 });
 
 // Helper: safe ban
-async function safeBanMember(guild, member, reason = 'Missing required role') {
+async function safeBanMember(guild, member, reason = 'Matched target role only') {
   if (!member) return;
   if (member.user?.bot) return;
   if (member.id === guild.ownerId) return;
 
-  if (exemptRoleIds.length && member.roles.cache.some(r => exemptRoleIds.includes(r.id))) {
-    return;
-  }
+  // Member must have the target role
+  if (!member.roles.cache.has(process.env.TARGET_ROLE_ID)) return;
 
-  if (member.roles.cache.has(requiredRoleId)) return;
+  // Count roles excluding @everyone
+  const rolesExcludingEveryone = member.roles.cache.filter(r => r.id !== guild.id);
+
+  // If they have ONLY the target role (and nothing else), ban
+  if (rolesExcludingEveryone.size !== 1) return;
 
   const me = await guild.members.fetchMe();
   const canBan =
@@ -66,6 +69,7 @@ async function safeBanMember(guild, member, reason = 'Missing required role') {
     }
   }
 }
+
 
 // Slash commands
 const commands = [
