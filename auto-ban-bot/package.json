@@ -1,0 +1,13 @@
+{
+  "name": "auto-ban-bot",
+  "version": "1.0.0",
+  "description": "Discord bot that bans users without a specific role and can purge unverified members",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.0.0"
+  }
+}
